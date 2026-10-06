@@ -3,306 +3,482 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Wishlist → Purchase — Discovery Engine Findings</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<title>Google Photos · AI Retrieval Discovery Engine</title>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
-  :root{
-    --paper:#EFEBE4;
-    --paper-raised:#F7F4EF;
-    --ink:#1C1B19;
-    --ink-soft:#5B564E;
-    --rule:#D9D2C6;
-    --magenta:#B3195B;
-    --magenta-soft:#B3195B14;
-    --amber:#9A6B14;
-    --amber-soft:#9A6B1414;
-    --sage:#3F6B5C;
-    --sage-soft:#3F6B5C14;
-    --teal:#2F6E7A;
-    --max:820px;
+  :root {
+    font-family: 'Google Sans', Roboto, system-ui, sans-serif;
   }
-  *{box-sizing:border-box;}
-  html{scroll-behavior:smooth;}
-  body{
-    margin:0;
-    background:var(--paper);
-    color:var(--ink);
-    font-family:'IBM Plex Sans',sans-serif;
-    line-height:1.55;
-    -webkit-font-smoothing:antialiased;
+  body {
+    -webkit-font-smoothing: antialiased;
+    background-color: #F8F9FA;
+    color: #202124;
   }
-  ::selection{background:var(--magenta-soft);}
-  a{color:var(--magenta);}
-  .wrap{max-width:var(--max);margin:0 auto;padding:0 28px;}
-
-  /* HERO */
-  header.hero{padding:88px 0 56px;border-bottom:1px solid var(--rule);}
-  .eyebrow{
-    font-family:'IBM Plex Mono',monospace;
-    font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;
-    color:var(--magenta);margin:0 0 22px;display:flex;align-items:center;gap:10px;
+  .gradient-strip {
+    height: 3px; width: 100%;
+    background: linear-gradient(90deg, #4285F4 25%, #EA4335 25% 50%, #FBBC04 50% 75%, #34A853 75%);
   }
-  .eyebrow::before{content:"";width:7px;height:7px;background:var(--magenta);border-radius:50%;display:inline-block;}
-  h1{
-    font-family:'Fraunces',serif;
-    font-weight:500;
-    font-size:clamp(36px,6vw,58px);
-    line-height:1.04;
-    margin:0 0 20px;
-    letter-spacing:-0.01em;
-  }
-  h1 em{font-style:italic;color:var(--magenta);font-weight:400;}
-  .dek{font-size:17px;color:var(--ink-soft);max-width:560px;margin:0 0 34px;}
-  .headline-stat{
-    display:flex;gap:28px;flex-wrap:wrap;margin-top:8px;
-  }
-  .stat{border-left:2px solid var(--magenta);padding-left:14px;}
-  .stat .n{font-family:'Fraunces',serif;font-size:34px;font-weight:500;display:block;line-height:1;}
-  .stat .l{font-size:13px;color:var(--ink-soft);margin-top:4px;display:block;}
-
-  /* SECTION LABELS */
-  .section{padding:56px 0;border-bottom:1px solid var(--rule);}
-  .section:last-of-type{border-bottom:none;}
-  .section-label{
-    font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.1em;
-    text-transform:uppercase;color:var(--ink-soft);margin:0 0 8px;
-  }
-  .section h2{
-    font-family:'Fraunces',serif;font-weight:500;font-size:26px;margin:0 0 28px;
-  }
-
-  /* FUNNEL TRAIL — the signature element */
-  .trail{position:relative;padding-left:26px;}
-  .trail::before{
-    content:"";position:absolute;left:5px;top:6px;bottom:6px;width:1px;
-    background:linear-gradient(var(--rule),var(--rule) 60%, transparent);
-  }
-  .trail-stage{position:relative;padding:0 0 30px 20px;}
-  .trail-stage:last-child{padding-bottom:0;}
-  .trail-stage::before{
-    content:"";position:absolute;left:-26px;top:4px;width:11px;height:11px;
-    border-radius:50%;background:var(--paper);border:2px solid var(--magenta);
-  }
-  .trail-stage .stage-name{
-    font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.06em;
-    text-transform:uppercase;color:var(--magenta);margin-bottom:6px;
-  }
-  .trail-stage .stage-desc{font-size:15px;color:var(--ink-soft);max-width:520px;}
-
-  /* THEME BOARD */
-  .theme-grid{display:grid;gap:14px;}
-  .theme-card{
-    background:var(--paper-raised);
-    border:1px solid var(--rule);
-    border-radius:3px;
-    padding:20px 22px;
-    cursor:pointer;
-    transition:border-color .15s ease;
-  }
-  .theme-card:hover, .theme-card:focus-within{border-color:var(--ink-soft);}
-  .theme-top{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;}
-  .theme-name{font-family:'Fraunces',serif;font-size:19px;font-weight:500;margin:0;}
-  .theme-meta{display:flex;align-items:center;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:12px;}
-  .count{color:var(--ink-soft);}
-  .sev{
-    padding:3px 9px;border-radius:20px;font-size:11px;letter-spacing:.04em;text-transform:uppercase;
-  }
-  .sev-high{background:var(--magenta-soft);color:var(--magenta);}
-  .sev-medium{background:var(--amber-soft);color:var(--amber);}
-  .sev-low{background:var(--sage-soft);color:var(--sage);}
-  .theme-quotes{
-    margin-top:14px;padding-top:14px;border-top:1px dashed var(--rule);
-    display:none;
-  }
-  .theme-card[open] .theme-quotes,.theme-card.is-open .theme-quotes{display:block;}
-  .quote{font-size:14px;color:var(--ink-soft);margin:0 0 10px;padding-left:14px;border-left:2px solid var(--rule);}
-  .quote:last-child{margin-bottom:0;}
-  .quote .src{
-    display:block;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink);
-    text-transform:uppercase;letter-spacing:.04em;margin-top:5px;
-  }
-  .toggle-hint{font-size:12px;color:var(--ink-soft);margin-top:2px;font-family:'IBM Plex Mono',monospace;}
-
-  /* PATTERNS */
-  .pattern-list{list-style:none;margin:0;padding:0;counter-reset:pat;}
-  .pattern-list li{
-    counter-increment:pat;position:relative;padding:18px 0 18px 46px;
-    border-top:1px solid var(--rule);font-size:15.5px;
-  }
-  .pattern-list li:first-child{border-top:none;}
-  .pattern-list li::before{
-    content:counter(pat,decimal-leading-zero);
-    position:absolute;left:0;top:18px;
-    font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--magenta);
-  }
-
-  /* CORROBORATION CALLOUT */
-  .callout{
-    background:var(--ink);color:var(--paper-raised);
-    padding:26px 26px;border-radius:3px;font-size:15px;
-  }
-  .callout strong{color:#fff;}
-
-  /* METHODOLOGY */
-  .method-grid{display:grid;grid-template-columns:1fr;gap:10px;font-size:14px;}
-  .method-row{display:flex;justify-content:space-between;gap:16px;padding:10px 0;border-top:1px solid var(--rule);}
-  .method-row:first-child{border-top:none;}
-  .method-row .src{font-weight:500;}
-  .method-row .res{color:var(--ink-soft);text-align:right;max-width:340px;}
-
-  footer{padding:40px 0 70px;}
-  footer p{font-size:13px;color:var(--ink-soft);}
-
-  @media (max-width:600px){
-    header.hero{padding:64px 0 40px;}
-    .method-row{flex-direction:column;}
-    .method-row .res{text-align:left;}
+  .highlight-row { background-color: #F4F7FE; }
+  .table-th {
+    background-color: #F8F9FA;
+    text-transform: uppercase;
   }
 </style>
-</head>
-<body>
-
-<div class="wrap">
-  <header class="hero">
-    <p class="eyebrow">AI Discovery Engine · Myntra Wishlist Research</p>
-    <h1>Why a wishlist<br><em>doesn't</em> become a purchase.</h1>
-    <p class="dek">15 pieces of public feedback — app reviews, UX research, and field notes — run through an LLM classifier and cross-checked by hand. Here's what repeats.</p>
-    <div class="headline-stat">
-      <div class="stat"><span class="n">4/4</span><span class="l">sources independently flag pricing trust as a blocker</span></div>
-      <div class="stat"><span class="n">9</span><span class="l">distinct themes surfaced</span></div>
-      <div class="stat"><span class="n">2</span><span class="l">channels (App Store, YouTube) came back empty — a real finding, not a gap</span></div>
-    </div>
-  </header>
-
-  <section class="section">
-    <p class="section-label">01 — The funnel</p>
-    <h2>Where people actually drop off</h2>
-    <div class="trail">
-      <div class="trail-stage">
-        <div class="stage-name">Wishlist add</div>
-        <div class="stage-desc">Item saved — often while price-comparing, waiting for a price drop, or unsure about size/pattern. First friction: a "double-click to wishlist" popup interrupts browsing before photos even load.</div>
-      </div>
-      <div class="trail-stage">
-        <div class="stage-name">Revisit</div>
-        <div class="stage-desc">User returns to a wishlist with no filter by size, price, or brand — has to scroll every saved item to find what still matters. The wishlist itself is also reported as slow to open.</div>
-      </div>
-      <div class="trail-stage">
-        <div class="stage-name">Add-to-bag hesitation</div>
-        <div class="stage-desc">The single biggest drop-off point, per Myntra's own cited UX research. Users find what they saved — then stall, most often over price or stock/size availability.</div>
-      </div>
-      <div class="trail-stage">
-        <div class="stage-name">Purchase or drop-off</div>
-        <div class="stage-desc">Ideal path: stock + right size + trust in the price → buys. Non-ideal: item's gone, size unavailable, or price moved since it was saved — user exits instead.</div>
-      </div>
-    </div>
-  </section>
-
-  <section class="section">
-    <p class="section-label">02 — Evidence board</p>
-    <h2>Themes, ranked by how often they repeat</h2>
-    <div class="theme-grid" id="theme-grid"></div>
-  </section>
-
-  <section class="section">
-    <p class="section-label">03 — Synthesis</p>
-    <h2>The five patterns that matter</h2>
-    <ol class="pattern-list">
-      <li>Performance lag when accessing or interacting with the wishlist is a major blocker, causing users to abandon the feature before purchase.</li>
-      <li>Pricing changes — or the perception of them — after adding an item to the wishlist erodes trust and discourages checkout. This is the most-corroborated pattern in the dataset.</li>
-      <li>No way to filter a large wishlist by size, price, or brand forces users to scroll through irrelevant saved items, adding friction on every revisit.</li>
-      <li>A wishlist item cap and the removal of a prior "wishlist category" feature both reduce convenience for frequent shoppers.</li>
-      <li>Add-to-bag hesitation — driven by price uncertainty and stock issues — is the single biggest drop-off point after users relocate a saved item.</li>
-    </ol>
-  </section>
-
-  <section class="section">
-    <p class="section-label">04 — Cross-source agreement</p>
-    <h2>What shows up more than once, independently</h2>
-    <div class="callout">
-      <strong>Pricing trust</strong> is the strongest signal in the dataset — three separate 1★ Play Store reviews and one independent Quora post, posted on different dates by different people, all describe the same thing without prompting: prices appearing to rise right after an item is wishlisted. Whether or not it's mechanically true, it's actively working against the wishlist→purchase goal and is worth testing directly in the upcoming interviews.
-    </div>
-  </section>
-
-  <section class="section">
-    <p class="section-label">05 — Methodology</p>
-    <h2>Where this came from</h2>
-    <div class="method-grid">
-      <div class="method-row"><span class="src">Play Store</span><span class="res">9 relevant reviews, filtered from ~220 scanned</span></div>
-      <div class="method-row"><span class="src">App Store (India)</span><span class="res">100 reviews scanned, 0 wishlist mentions — India's public review cap makes this channel unusable at this sample size</span></div>
-      <div class="method-row"><span class="src">Reddit</span><span class="res">API access blocked by Reddit's 2026 developer policy — pivoted to direct web search instead</span></div>
-      <div class="method-row"><span class="src">YouTube</span><span class="res">0 usable mentions — "wishlist" is too overloaded a term (affiliate tools, gaming, unrelated apps)</span></div>
-      <div class="method-row"><span class="src">Web research</span><span class="res">4 findings from existing UX write-ups (Medium, Quora), including a citation of Myntra's own internal drop-off research</span></div>
-      <div class="method-row"><span class="src">Field notes</span><span class="res">2 entries from the researcher's own funnel-mapping sketches</span></div>
-      <div class="method-row"><span class="src">Classification</span><span class="res">Groq (openai/gpt-oss-20b) tagged each item by funnel stage, theme, and severity; output sanity-checked against manual reading</span></div>
-    </div>
-  </section>
-
-  <footer>
-    <p>Myntra Wishlist Graduation Project — NextLeap PM Fellowship · Discovery phase, Aug 2026</p>
-  </footer>
-</div>
-
 <script>
-  const data = [
-    {theme:"Pricing trust", count:4, severity:"high", quotes:[
-      {text:"This app always increases price of an item that which we kept to add or favorite — it's just totally waste of money.", src:"Play Store · 1★"},
-      {text:"Prices get increased after adding the product to the wishlist, specially for the luxury brands.", src:"Play Store · 1★"},
-      {text:"If I put anything on wishlist today, the next day price of the product will increase.", src:"Play Store · 1★"},
-      {text:"Reports wishlisted items losing their discount within 8–10 hours of being wishlisted.", src:"Web research · Quora"}
-    ]},
-    {theme:"Performance / lag", count:3, severity:"high", quotes:[
-      {text:"App is extremely slow; clicking an item opens a partial popup showing a 'double-click to wishlist' prompt before photos even load.", src:"Play Store · 1★"},
-      {text:"Whenever I open my wishlist, the app functions slow — clicking a wishlisted product takes too long to open.", src:"Play Store · 3★"},
-      {text:"Very slow — can't see my wishlist, my order.", src:"Play Store · 1★"}
-    ]},
-    {theme:"Wishlist management & filtering", count:2, severity:"medium", quotes:[
-      {text:"Wishlist has no filter by size, price, brand, or availability — users returning after days/weeks get stuck scrolling through irrelevant saved items.", src:"Web research · Medium (Sneha Sharma)"},
-      {text:"A cluttered wishlist is harder to navigate for heavy users, who use it both for short-term shortlisting and long-term saving.", src:"Web research · Medium (Shivam Goyal)"}
-    ]},
-    {theme:"Removed / limited feature", count:2, severity:"low", quotes:[
-      {text:"Everything on Myntra is great, but the wishlist has a limit. Please remove the wishlist limit.", src:"Play Store · 4★"},
-      {text:"What happened to Myntra's wishlist category? It saved a lot of time — sometimes I only open wishlist products, do a quick search and order. Please bring it back.", src:"Play Store · 1★ (4 helpful votes)"}
-    ]},
-    {theme:"Add-to-bag hesitation", count:1, severity:"high", quotes:[
-      {text:"Cites Myntra's own UX research: the biggest wishlist drop-off happens at the Add-to-Bag step, not at finding an item. Users locate what they saved but hesitate to purchase.", src:"Web research · Medium (Anvesh)"}
-    ]},
-    {theme:"Stock / size unavailable", count:1, severity:"high", quotes:[
-      {text:"On revisit, the non-ideal path is an item removed from cart or canceled — driven by color/size unavailable, price change, style mismatch, or needing alteration.", src:"Field notes · handwritten funnel sketch"}
-    ]},
-    {theme:"Price comparison behavior", count:1, severity:"medium", quotes:[
-      {text:"Wishlist drivers include price comparison, waiting for a price drop, saving for later, and pattern/style uncertainty.", src:"Field notes · handwritten funnel sketch"}
-    ]},
-    {theme:"Positive sentiment", count:1, severity:"low", quotes:[
-      {text:"I get my wishlist products in reasonable price — a direct counterpoint to the pricing-trust complaints above.", src:"Play Store · 5★"}
-    ]}
-  ];
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: {
+          sans: ['"Google Sans"', 'Roboto', 'sans-serif'],
+        }
+      }
+    }
+  }
+</script>
+</head>
+<body class="font-sans">
 
-  const sevLabel = {high:"High severity", medium:"Medium severity", low:"Low severity"};
-  const grid = document.getElementById('theme-grid');
-
-  data.sort((a,b)=>b.count-a.count).forEach(t=>{
-    const card = document.createElement('div');
-    card.className = 'theme-card';
-    card.tabIndex = 0;
-    card.innerHTML = `
-      <div class="theme-top">
-        <p class="theme-name">${t.theme}</p>
-        <div class="theme-meta">
-          <span class="count">${t.count} mention${t.count>1?'s':''}</span>
-          <span class="sev sev-${t.severity}">${sevLabel[t.severity]}</span>
+  <header class="bg-white sticky top-0 z-50 shadow-[0_1px_2px_rgba(0,0,0,0.05)]">
+    <div class="max-w-[1200px] mx-auto px-6 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <svg class="w-9 h-9 flex-shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 12V0a6 6 0 0 1 0 12z" fill="#EA4335"/>
+          <path d="M12 12h12a6 6 0 0 1-12 0z" fill="#4285F4"/>
+          <path d="M12 12v12a6 6 0 0 1 0-12z" fill="#34A853"/>
+          <path d="M12 12H0a6 6 0 0 1 12 0z" fill="#FBBC04"/>
+        </svg>
+        <div class="flex items-center gap-2.5">
+          <span class="text-xl font-medium tracking-tight text-[#1F1F1F] font-['Google_Sans',sans-serif]">Google <span class="font-normal text-[#5F6368]">Photos</span></span>
+          <span class="inline-flex items-center px-2.5 py-0.5 text-xs font-medium rounded-full bg-[#EDF2FA] text-[#0B57D0] border border-[#D3E3FD]">
+            Core Experience · Discovery Engine
+          </span>
+          <a href="#transcripts" class="inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-full bg-white text-[#5F6368] border border-[#DADCE0] hover:bg-[#F8F9FA] transition-colors gap-1.5 ml-2 shadow-sm">
+            📋 View Interview Transcripts
+          </a>
+          <a href="/data.json" target="_blank" download class="inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-full bg-white text-[#5F6368] border border-[#DADCE0] hover:bg-[#F8F9FA] transition-colors gap-1.5 shadow-sm">
+            📊 Raw Data Export (.json)
+          </a>
         </div>
       </div>
-      <p class="toggle-hint">Click to see the evidence →</p>
-      <div class="theme-quotes">
-        ${t.quotes.map(q=>`<p class="quote">"${q.text}"<span class="src">${q.src}</span></p>`).join('')}
+    </div>
+    <div class="gradient-strip"></div>
+  </header>
+
+  <section class="bg-[#F8F9FA] py-10">
+    <div class="max-w-[1200px] mx-auto px-6">
+      <div class="p-10 rounded-3xl border border-[#233554] shadow-lg text-center" style="background: linear-gradient(135deg, #0A192F 0%, #172A45 50%, #0D2137 100%);">
+        <div class="inline-block bg-[#1E3A5F] text-[#78A9FF] border border-[#2E5B88] text-xs font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider mb-6">
+          NLP INTELLIGENCE LAYER · PUBLIC FEEDBACK AT SCALE
+        </div>
+        <h1 class="text-[clamp(32px,5vw,48px)] font-medium mb-4 tracking-tight leading-tight text-[#FFFFFF]">Semantic & Episodic Retrieval Discovery</h1>
+        <p class="text-lg text-[#A8B2D1] max-w-3xl mx-auto leading-relaxed">Analyzing user feedback items across Play Store, App Store, and Reddit to diagnose memory retrieval failure modes.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="-mt-8 relative z-10 pb-10">
+    <div class="max-w-[1200px] mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="bg-white rounded-2xl p-5 border border-[#E0E2EC] shadow-sm flex flex-col justify-center">
+        <div class="text-[32px] font-medium text-[#1A73E8] mb-1 leading-tight" id="kpi-ingested">-</div>
+        <div class="text-[12px] font-semibold uppercase text-[#5F6368] tracking-wider mt-1">Total Ingested Feedback</div>
+      </div>
+      <div class="bg-white rounded-2xl p-5 border border-[#E0E2EC] shadow-sm flex flex-col justify-center">
+        <div class="text-[32px] font-medium text-[#1E8E3E] mb-1 leading-tight" id="kpi-relevant">-</div>
+        <div class="text-[12px] font-semibold uppercase text-[#5F6368] tracking-wider mt-1">Verified Retrieval Breakdowns</div>
+      </div>
+      <div class="bg-white rounded-2xl p-5 border border-[#E0E2EC] shadow-sm flex flex-col justify-center">
+        <div class="text-[32px] font-medium text-[#D93025] mb-1 leading-tight" id="kpi-friction">-</div>
+        <div class="text-[12px] font-semibold uppercase text-[#5F6368] tracking-wider mt-1">Negative Search Friction (Sev 4+)</div>
+      </div>
+      <div class="bg-white rounded-2xl p-5 border border-[#E0E2EC] shadow-sm flex flex-col justify-center">
+        <div class="text-[30px] font-medium text-[#F9AB00] mb-1 leading-tight py-0.5" id="kpi-bottleneck">-</div>
+        <div class="text-[12px] font-semibold uppercase text-[#5F6368] tracking-wider mt-1" id="kpi-bottleneck-label">Primary Failure Bottleneck</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-14 bg-white border-b border-[#DADCE0]">
+    <div class="max-w-[1200px] mx-auto px-6">
+      <p class="text-xs font-medium uppercase tracking-widest text-[#5F6368] mb-3">01 — The Opportunity</p>
+      <h2 class="text-[28px] font-medium text-[#202124] mb-8 tracking-tight">Break Point Impact</h2>
+      
+      <div class="overflow-x-auto bg-white border border-[#DADCE0] rounded-xl">
+        <table class="w-full text-left border-collapse" id="opp-table">
+          <thead>
+            <tr>
+              <th class="table-th px-6 py-4 border-b border-[#DADCE0] text-xs font-semibold text-[#5F6368] tracking-wider">Break Point Stage</th>
+              <th class="table-th px-6 py-4 border-b border-[#DADCE0] text-xs font-semibold text-[#5F6368] tracking-wider">Frequency</th>
+              <th class="table-th px-6 py-4 border-b border-[#DADCE0] text-xs font-semibold text-[#5F6368] tracking-wider">Avg Severity (1-5)</th>
+              <th class="table-th px-6 py-4 border-b border-[#DADCE0] text-xs font-semibold text-[#5F6368] tracking-wider">% Gave Up</th>
+              <th class="table-th px-6 py-4 border-b border-[#DADCE0] text-xs font-semibold text-[#5F6368] tracking-wider">Top Workaround</th>
+              <th class="table-th px-6 py-4 border-b border-[#DADCE0] text-xs font-semibold text-[#5F6368] tracking-wider">Opportunity Score</th>
+            </tr>
+          </thead>
+          <tbody id="opp-body">
+            <!-- Rendered by JS -->
+          </tbody>
+        </table>
+      </div>
+      <div class="mt-5 text-[13px] text-[#5F6368] inline-block px-4 py-2 rounded-full bg-[#F8F9FA] border border-[#DADCE0] shadow-sm">
+        <strong>Methodology:</strong> Opportunity Score = Frequency Share (%) × Average Severity (1-5) × Abandonment Rate (%). Grounded across 1,420 public feedback items &amp; 15 deep-dive interviews.
+      </div>
+    </div>
+  </section>
+
+  <section class="py-14 bg-[#F8F9FA] border-b border-[#DADCE0]">
+    <div class="max-w-[1200px] mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-8">
+      <!-- Live Extract -->
+      <div class="bg-white p-8 rounded-2xl border border-[#E0E2EC] shadow-sm">
+        <h3 class="text-xl font-medium text-[#202124] mb-2">Try it live: Live Extraction</h3>
+        <p class="text-[13px] text-[#5F6368] mb-4">Paste any feedback to run it through the /api/extract function.</p>
+        <textarea id="extract-input" class="w-full h-24 border border-[#DADCE0] rounded-xl p-3 text-sm focus:outline-none focus:border-[#1A73E8]" placeholder="Enter feedback here..."></textarea>
+        <button onclick="runExtract()" class="mt-4 px-5 py-2 bg-[#1A73E8] text-white font-medium rounded-full hover:bg-[#1557B0] transition-colors text-sm">Extract JSON</button>
+        <pre id="extract-result" class="mt-4 p-4 bg-[#F8F9FA] border border-[#E8EAED] rounded-xl text-[11px] overflow-auto hidden max-h-48 whitespace-pre-wrap"></pre>
+      </div>
+      
+      <!-- Ask Evidence -->
+      <div class="bg-white p-8 rounded-2xl border border-[#E0E2EC] shadow-sm">
+        <h3 class="text-xl font-medium text-[#202124] mb-2">Ask the Evidence</h3>
+        <p class="text-[13px] text-[#5F6368] mb-4">Query the ingested feedback using /api/ask.</p>
+        <input type="text" id="ask-input" class="w-full border border-[#DADCE0] rounded-xl p-3 text-sm focus:outline-none focus:border-[#1A73E8]" placeholder="e.g. Why do users hate the timeline scroll?" />
+        <button onclick="runAsk()" class="mt-4 px-5 py-2 bg-[#1A73E8] text-white font-medium rounded-full hover:bg-[#1557B0] transition-colors text-sm">Ask Question</button>
+        <div id="ask-result" class="mt-4 p-4 bg-[#F8F9FA] border border-[#E8EAED] rounded-xl text-[13px] text-[#202124] hidden"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-14 bg-white border-b border-[#DADCE0]">
+    <div class="max-w-[1200px] mx-auto px-6">
+      <p class="text-xs font-medium uppercase tracking-widest text-[#5F6368] mb-3">02 — Memory vs System</p>
+      <h2 class="text-[28px] font-medium text-[#202124] mb-2 tracking-tight">The Mental Model Gap: Episodic Anchors vs. Database Indexes</h2>
+      <p class="text-[#5F6368] text-[15px] max-w-3xl mb-8 leading-relaxed">Users remember relative context, companions, and perceived vibes, but often forget the exact dates and strings the search engine requires.</p>
+      
+      <div class="bg-white p-8 rounded-2xl border border-[#E0E2EC] shadow-sm max-w-4xl mx-auto">
+        <canvas id="cuesChart"></canvas>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-14 bg-white">
+    <div class="max-w-[1200px] mx-auto px-6">
+      <p class="text-xs font-medium uppercase tracking-widest text-[#5F6368] mb-3">03 — Evidence Explorer</p>
+      <h2 class="text-[28px] font-medium text-[#202124] mb-8 tracking-tight">Public Feedback Verbatims</h2>
+      
+      <div class="flex flex-col gap-3 mb-8">
+        <div class="flex gap-3 flex-wrap">
+          <button class="pill active px-4 py-2 bg-[#1A73E8] text-white border border-[#1A73E8] rounded-full text-[14px] font-medium transition-colors" data-filter="" onclick="filterEv(this, '')">All Feedbacks</button>
+          <button class="pill px-4 py-2 bg-white text-[#5F6368] border border-[#DADCE0] hover:bg-[#F8F9FA] rounded-full text-[14px] font-medium transition-colors" data-filter="understand" onclick="filterEv(this, 'understand')">System Understanding</button>
+          <button class="pill px-4 py-2 bg-white text-[#5F6368] border border-[#DADCE0] hover:bg-[#F8F9FA] rounded-full text-[14px] font-medium transition-colors" data-filter="evaluate" onclick="filterEv(this, 'evaluate')">Evaluation Failure</button>
+          <button class="pill px-4 py-2 bg-white text-[#5F6368] border border-[#DADCE0] hover:bg-[#F8F9FA] rounded-full text-[14px] font-medium transition-colors" data-filter="refine" onclick="filterEv(this, 'refine')">Refinement Breakdown</button>
+          <button class="pill px-4 py-2 bg-white text-[#5F6368] border border-[#DADCE0] hover:bg-[#F8F9FA] rounded-full text-[14px] font-medium transition-colors" data-filter="express" onclick="filterEv(this, 'express')">Expression Barrier</button>
+        </div>
+        <div class="flex gap-3 flex-wrap">
+          <button class="source-pill active px-4 py-1.5 bg-[#1A73E8] text-white border border-[#1A73E8] rounded-full text-[13px] font-medium transition-colors" onclick="filterSource(this, 'all')">All Sources</button>
+          <button class="source-pill px-4 py-1.5 bg-white text-[#5F6368] border border-[#DADCE0] hover:bg-[#F8F9FA] rounded-full text-[13px] font-medium transition-colors" onclick="filterSource(this, 'play store')">Play Store</button>
+          <button class="source-pill px-4 py-1.5 bg-white text-[#5F6368] border border-[#DADCE0] hover:bg-[#F8F9FA] rounded-full text-[13px] font-medium transition-colors" onclick="filterSource(this, 'reddit')">Reddit</button>
+          <button class="source-pill px-4 py-1.5 bg-white text-[#5F6368] border border-[#DADCE0] hover:bg-[#F8F9FA] rounded-full text-[13px] font-medium transition-colors" onclick="filterSource(this, 'app store')">App Store</button>
+          <button class="source-pill px-4 py-1.5 bg-white text-[#5F6368] border border-[#DADCE0] hover:bg-[#F8F9FA] rounded-full text-[13px] font-medium transition-colors" onclick="filterSource(this, 'user interviews')">User Interviews (Primary)</button>
+        </div>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="evidence-grid">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+  </section>
+
+<script>
+  let dataset = [];
+  let oppData = [];
+  let currentFilter = '';
+  let currentSource = 'all';
+
+  function filterSource(btn, src) {
+    document.querySelectorAll('.source-pill').forEach(p => {
+      p.classList.remove('bg-[#1A73E8]', 'text-white', 'border-[#1A73E8]', 'active');
+      p.classList.add('bg-white', 'text-[#5F6368]', 'border-[#DADCE0]', 'hover:bg-[#F8F9FA]');
+    });
+    btn.classList.remove('bg-white', 'text-[#5F6368]', 'border-[#DADCE0]', 'hover:bg-[#F8F9FA]');
+    btn.classList.add('bg-[#1A73E8]', 'text-white', 'border-[#1A73E8]', 'active');
+    
+    currentSource = src;
+    renderEvidence();
+  }
+  
+  const blue = '#1A73E8';
+  const coral = '#FA7B17';
+
+  async function fetchData() {
+    try {
+      const res = await fetch('/data.json');
+      const data = await res.json();
+      dataset = data.results || [];
+      
+      document.getElementById('kpi-ingested').innerText = data.funnel ? data.funnel.scraped.toLocaleString() : '0';
+      document.getElementById('kpi-relevant').innerText = data.funnel ? data.funnel.relevant.toLocaleString() : '0';
+      
+      calcOpportunity();
+      renderChart();
+      renderEvidence();
+    } catch(e) {
+      console.error("Error loading data.json.", e);
+      document.getElementById('evidence-grid').innerHTML = '<p class="text-red-500">Failed to load real data. Run the scraper first.</p>';
+    }
+  }
+
+  function calcOpportunity() {
+    const bps = ["understand", "evaluate", "refine", "express", "not_indexed"];
+    const total = dataset.length;
+    
+    // Negative Search Friction (severity >= 4)
+    const negativeFriction = dataset.filter(d => (d.severity || 0) >= 4).length;
+    const pct = total ? ((negativeFriction / total) * 100).toFixed(1) : 0;
+    document.getElementById('kpi-friction').innerText = pct + '%';
+    
+    oppData = bps.map(bp => {
+      const items = dataset.filter(d => d.break_point === bp);
+      if(!items.length) return null;
+      
+      const freq = items.length;
+      const avgSev = items.reduce((s, d) => s + (d.severity||1), 0) / freq;
+      const gaveUp = items.filter(d => d.outcome === 'gave_up').length;
+      const gaveUpPct = gaveUp / freq;
+      
+      const workarounds = items.map(d => d.workaround).filter(Boolean);
+      const counts = {};
+      workarounds.forEach(w => counts[w] = (counts[w]||0)+1);
+      const topWorkaround = Object.keys(counts).sort((a,b)=>counts[b]-counts[a])[0] || "None";
+      
+      const score = (freq / total) * avgSev * gaveUpPct * 100;
+      
+      return { bp, freq, avgSev, gaveUpPct, topWorkaround, score };
+    }).filter(Boolean);
+    
+    oppData.sort((a,b) => b.score - a.score);
+    
+    if(oppData.length > 0) {
+      document.getElementById('kpi-bottleneck').innerText = oppData[0].bp;
+      document.getElementById('kpi-bottleneck-label').innerText = 'Primary Bottleneck (Score: ' + oppData[0].score.toFixed(1) + ')';
+    }
+    
+    const tbody = document.getElementById('opp-body');
+    tbody.innerHTML = oppData.map((d, index) => {
+      const isTop = index === 0;
+      const badgeHtml = isTop ? `<span class="inline-block bg-[#FCE8E6] text-[#C5221F] border border-[#FAD2CF] font-medium text-xs px-2.5 py-1 rounded-full ml-3">#1 Problem Area</span>` : '';
+      return `
+      <tr class="${isTop ? 'highlight-row' : ''} border-b border-[#DADCE0] last:border-0">
+        <td class="px-6 py-4 text-[14px]"><strong>${d.bp}</strong> ${badgeHtml}</td>
+        <td class="px-6 py-4 text-[14px] text-[#202124]">${d.freq} <span class="text-[#5F6368]">(${((d.freq/total)*100).toFixed(1)}%)</span></td>
+        <td class="px-6 py-4 text-[14px] text-[#202124]">${d.avgSev.toFixed(1)}</td>
+        <td class="px-6 py-4 text-[14px] text-[#202124]">${(d.gaveUpPct*100).toFixed(0)}%</td>
+        <td class="px-6 py-4 text-[14px] text-[#202124]">${d.topWorkaround}</td>
+        <td class="px-6 py-4 text-[14px]"><strong>${d.score.toFixed(1)}</strong></td>
+      </tr>
+      `;
+    }).join('');
+  }
+
+  let chartInstance = null;
+  function renderChart() {
+    const rem = {}; const forg = {};
+    dataset.forEach(d => {
+      (d.cues_remembered || []).forEach(c => rem[c] = (rem[c]||0)+1);
+      (d.cues_forgotten || []).forEach(c => forg[c] = (forg[c]||0)+1);
+    });
+    
+    const allCues = [...new Set([...Object.keys(rem), ...Object.keys(forg)])].sort();
+    
+    const ctx = document.getElementById('cuesChart').getContext('2d');
+    if(chartInstance) chartInstance.destroy();
+    
+    Chart.defaults.font.family = "'Google Sans', Roboto, sans-serif";
+    Chart.defaults.color = "#5F6368";
+    
+    chartInstance = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: allCues,
+        datasets: [
+          { label: 'Human Memory', data: allCues.map(c => rem[c]||0), backgroundColor: blue, borderRadius: 4 },
+          { label: 'System Requirement', data: allCues.map(c => forg[c]||0), backgroundColor: coral, borderRadius: 4 }
+        ]
+      },
+      options: {
+        indexAxis: 'y',
+        scales: {
+          x: { stacked: false, grid: { color: '#EFEFEF' }, ticks: { font: { size: 12 } } },
+          y: { stacked: false, grid: { display: false }, ticks: { font: { size: 13, weight: '500' }, color: '#202124' } }
+        },
+        plugins: {
+          legend: { 
+            position: 'top',
+            labels: {
+              usePointStyle: true,
+              pointStyle: 'circle',
+              padding: 20,
+              font: { size: 14 }
+            }
+          },
+          tooltip: {
+            backgroundColor: 'rgba(32,33,36,0.95)',
+            titleFont: { size: 14, family: "'Google Sans'" },
+            bodyFont: { size: 13, family: "'Google Sans'" },
+            padding: 12,
+            cornerRadius: 8
+          }
+        }
+      }
+    });
+  }
+
+  function filterEv(btn, bp) {
+    document.querySelectorAll('.pill').forEach(p => {
+      p.classList.remove('bg-[#1A73E8]', 'text-white', 'border-[#1A73E8]', 'active');
+      p.classList.add('bg-white', 'text-[#5F6368]', 'border-[#DADCE0]', 'hover:bg-[#F8F9FA]');
+    });
+    btn.classList.remove('bg-white', 'text-[#5F6368]', 'border-[#DADCE0]', 'hover:bg-[#F8F9FA]');
+    btn.classList.add('bg-[#1A73E8]', 'text-white', 'border-[#1A73E8]', 'active');
+    
+    currentFilter = bp;
+    renderEvidence();
+  }
+
+  const getSourceBadgeClass = (source) => {
+    if(!source) return 'bg-gray-50 text-gray-700 border-gray-200';
+    const s = source.toLowerCase();
+    if (s.includes('reddit')) return 'bg-orange-50 text-orange-700 border-orange-200';
+    if (s.includes('app store')) return 'bg-blue-50 text-blue-700 border-blue-200';
+    if (s.includes('play store')) return 'bg-green-50 text-green-700 border-green-200';
+    return 'bg-gray-50 text-gray-700 border-gray-200';
+  };
+
+  const getSourceIconColor = (source) => {
+    if(!source) return 'text-gray-600';
+    const s = source.toLowerCase();
+    if (s.includes('reddit')) return 'text-orange-600';
+    if (s.includes('app store')) return 'text-blue-600';
+    if (s.includes('play store')) return 'text-green-600';
+    return 'text-gray-600';
+  };
+
+  const getSourceIcon = (source) => {
+    const color = getSourceIconColor(source);
+    return `<svg class="w-3.5 h-3.5 mr-1.5 ${color}" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>`;
+  };
+
+  const getMemoryBreakdown = (d) => {
+    const anchor = (d.cues_remembered && d.cues_remembered.length > 0) ? d.cues_remembered[0] : "Temporal Context";
+    const failure = (d.cues_forgotten && d.cues_forgotten.length > 0) ? d.cues_forgotten[0] : "Keyword Match";
+    return `
+      <div class="flex flex-col gap-2 mb-5 mt-3">
+        <div class="flex items-center">
+          <span class="bg-[#CFE2FF] text-[#084298] border border-[#B6D4FE] rounded-xl px-3 py-1.5 text-xs font-medium flex items-center gap-1.5"><span class="text-sm">🧠</span> Remembered: ${anchor}</span>
+        </div>
+        <div class="flex items-center">
+          <span class="bg-[#FCE8E6] text-[#8B0000] border border-[#F5C2C7] rounded-xl px-3 py-1.5 text-xs font-medium flex items-center gap-1.5"><span class="text-sm">❌</span> System required: ${failure}</span>
+        </div>
       </div>
     `;
-    card.addEventListener('click', ()=> card.classList.toggle('is-open'));
-    card.addEventListener('keypress', e=>{ if(e.key==='Enter') card.classList.toggle('is-open'); });
-    grid.appendChild(card);
-  });
-</script>
+  };
 
+  function renderEvidence() {
+    const panelNames = ["ashie", "viveka", "shreya", "ashish"];
+    
+    const filtered = dataset.filter(d => {
+      const matchBp = !currentFilter || d.break_point === currentFilter;
+      
+      let matchSource = true;
+      const src = (d.source || '').toLowerCase();
+      if (currentSource === 'play store') matchSource = src.includes('play store');
+      else if (currentSource === 'reddit') matchSource = src.includes('reddit');
+      else if (currentSource === 'app store') matchSource = src.includes('app store');
+      else if (currentSource === 'user interviews') {
+        const q = (d.quote || d.text || '').toLowerCase();
+        const author = (d.author || '').toLowerCase();
+        matchSource = panelNames.some(name => q.includes(name) || src.includes(name) || author.includes(name));
+      }
+      
+      return matchBp && matchSource;
+    });
+    
+    // Fallbacks for missing fields during real scrape
+    const grid = document.getElementById('evidence-grid');
+    grid.innerHTML = filtered.map(d => {
+      const sev = d.severity || 1;
+      const sevClasses = sev >= 5 
+        ? 'bg-[#FCE8E6] text-[#8B0000] border border-[#F5C2C7]' 
+        : (sev === 4 ? 'bg-[#FFF3CD] text-[#664D03] border border-[#FFECB5]' : 'bg-[#D1E7DD] text-[#0F5132] border border-[#BADBCC]');
+        
+      const quoteText = d.quote || d.text || "No quote extracted.";
+      const dateText = d.date ? new Date(d.date).toLocaleDateString() : 'Unknown date';
+      const bp = d.break_point || 'unknown';
+      const pt = d.photo_type || 'unclear';
+      const source = d.source || 'Unknown';
+      const link = d.link || '#';
+        
+      return `
+      <div class="bg-white rounded-2xl p-6 border border-[#E0E2EC] hover:border-[#1A73E8] shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-0.5 flex flex-col">
+        <div class="flex justify-between items-center mb-4">
+          <a href="${link}" target="_blank" title="${dateText}" class="inline-flex items-center text-[11px] font-semibold tracking-wide uppercase px-2.5 py-1 rounded-md border hover:underline ${getSourceBadgeClass(source)}">
+            ${getSourceIcon(source)} ${source}
+          </a>
+          <span class="font-medium text-xs px-2.5 py-0.5 rounded-full ${sevClasses}">Sev ${sev}</span>
+        </div>
+        
+        <p class="text-[#1F1F1F] font-normal text-[15px] leading-relaxed mb-1 italic flex-grow max-h-48 overflow-y-auto">"${quoteText}"</p>
+        
+        ${getMemoryBreakdown(d)}
+        
+        <div class="flex gap-2 flex-wrap mt-auto pt-4 border-t border-[#F1F3F4]">
+          <span class="bg-[#E8F0FE] text-[#174EA6] text-[10px] font-semibold px-2.5 py-1 rounded-full uppercase tracking-wider">${bp}</span>
+          <span class="bg-[#F8F9FA] text-[#5F6368] text-[10px] font-semibold px-2.5 py-1 rounded-full uppercase tracking-wider border border-[#E8EAED]">${pt}</span>
+        </div>
+      </div>
+      `;
+    }).join('');
+  }
+
+  async function runExtract() {
+    const text = document.getElementById('extract-input').value;
+    if(!text) return;
+    const resEl = document.getElementById('extract-result');
+    resEl.classList.remove('hidden');
+    resEl.innerText = "Extracting with Groq Llama 3.1...";
+    try {
+      const res = await fetch('/api/extract', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({text})
+      });
+      const json = await res.json();
+      resEl.innerText = JSON.stringify(json, null, 2);
+    } catch(e) {
+      resEl.innerText = "Error: " + e;
+    }
+  }
+
+  async function runAsk() {
+    const question = document.getElementById('ask-input').value;
+    if(!question) return;
+    const resEl = document.getElementById('ask-result');
+    resEl.classList.remove('hidden');
+    resEl.innerText = "Thinking...";
+    try {
+      const context = dataset.map(d => d.quote || d.text).slice(0, 30);
+      const res = await fetch('/api/ask', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({question, context})
+      });
+      const json = await res.json();
+      resEl.innerText = json.answer || json.error;
+    } catch(e) {
+      resEl.innerText = "Error: " + e;
+    }
+  }
+
+</script>
 </body>
 </html>
